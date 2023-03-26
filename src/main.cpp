@@ -11,5 +11,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  fill_solid(leds, NUM_LEDS, CRGB::Red);
+  FastLED.show();
 }
