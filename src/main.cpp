@@ -19,6 +19,6 @@ void loop() {
       leds[i] = CHSV((i * 256 / NUM_LEDS) + j, 255, 255);
     }
     FastLED.show();
-    delay(20);
+    delay(5);
   }
 }
