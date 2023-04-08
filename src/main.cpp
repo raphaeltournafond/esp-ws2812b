@@ -31,36 +31,47 @@ void setup() {
   Serial.print("AP IP address: ");
   Serial.println(WiFi.softAPIP());
 
+  // Serve the web page
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    String html = "<html><body>";
+    html += "<h1>Swee.brz le gros bg</h1>";
+    html += "<input type='color' id='colorPicker' value='#FF0000'>";
+    html += "<button onclick='sendColor()'>Send Color</button>";
+    html += "<script>";
+    html += "function sendColor() {\n";
+    html += "  var color = document.getElementById('colorPicker').value;\n";
+    html += "  fetch('/setColor?color=' + encodeURIComponent(color))\n";
+    html += "    .then(response => {\n";
+    html += "      if (response.ok) {\n";
+    html += "        return response.text();\n";
+    html += "      } else {\n";
+    html += "        throw new Error('Error: ' + response.status);\n";
+    html += "      }\n";
+    html += "    })\n";
+    html += "}\n";
+    html += "</script>";
+    html += "</body></html>";
+    request->send(200, "text/html", html);
+  });
+
   // Set up a handler for the HTTP GET request with URL parameters
-  server.on("/color", HTTP_GET, [](AsyncWebServerRequest *request){
-    // Access the URL parameters using request->arg()
-    String r = request->arg("r");
-    String g = request->arg("g");
-    String b = request->arg("b");
-    String l = request->arg("l");
-
-    // Process the data as needed
-    Serial.println("r: " + r);
-    Serial.println("g: " + g);
-    Serial.println("b: " + b);
-    Serial.println("l: " + l);
-
-    FastLED.setBrightness(l.toInt());
+  server.on("/setColor", HTTP_GET, [](AsyncWebServerRequest *request){
+    String hexColor = request->getParam("color")->value();
+    Serial.print("Received color: ");
+    Serial.println(hexColor);
 
     FastLED.clear();
 
-    int red = r.toInt();
-    int green = g.toInt();
-    int blue = b.toInt();
-
-    CRGB clientColor = CRGB(red, green, blue);
-    fill_solid(leds, NUM_LEDS, clientColor);
+    CRGB color;
+    sscanf(hexColor.c_str(), "#%02X%02X%02X", &color.r, &color.g, &color.b);
+    Serial.print("RGB color: ");
+    Serial.println(color);
+    fill_solid(leds, NUM_LEDS, color);
 
     FastLED.show();
 
     // Send a response to the client
-    String response = "r: " + r + "\ng: " + g + "\nb: " + b + "\nl: " + l;
-    request->send(200, "text/plain", response);
+    request->send(200, "text/plain", "Color received: " + color);
   });
 
   // Start the server
