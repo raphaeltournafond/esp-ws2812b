@@ -10,6 +10,11 @@ const char* password = "InstaLED";
 // create server instance
 AsyncWebServer server(80);
 
+// Replace with your desired static IP address
+IPAddress local_IP(192,168,4,10);
+IPAddress gateway(192,168,4,9);
+IPAddress subnet(255,255,255,0);
+
 #define NUM_LEDS 6
 #define DATA_PIN 13
 #define BRIGTHNESS 255
@@ -33,6 +38,9 @@ void setup() {
   // Webserver setup
   // Start serial communication
   Serial.begin(115200);
+
+  // Set static IP address for AP
+  WiFi.softAPConfig(local_IP, gateway, subnet);
 
   // Set ESP32 as AP with the given SSID and password
   WiFi.softAP(ssid, password);
