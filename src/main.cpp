@@ -236,7 +236,7 @@ void loop() {
     ColorWipe(currentColor);
     break;
   case 3:
-    fadeEffect(currentColor, CRGB::Black, 100);
+    fadeEffect(currentColor, CRGB::Black, 200);
     break;
   case 4:
     twinkleEffect(currentColor);
