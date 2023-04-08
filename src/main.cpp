@@ -182,6 +182,7 @@ void ColorWipe(CRGB color) {
   // Turn off all LEDs
   FastLED.clear();
   FastLED.show();
+  delay(100);
 }
 
 void fadeEffect(CRGB color1, CRGB color2, int duration) {
